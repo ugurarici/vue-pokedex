@@ -1,28 +1,120 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div class="grid">
+      <div>
+        <h1>Vue Pokedex</h1>
+        <div v-if="list.results && list.results.length > 0">
+          <div
+            v-if="list.previous"
+            class="pokedex-list-item"
+            @click="fetchList(list.previous)"
+            style="justify-content: center"
+          >
+            Previous Page
+          </div>
+          <div
+            class="pokedex-list-item"
+            v-for="pokemon in listResultsWithImage"
+            :key="pokemon.name"
+            @click="selectPokemon(pokemon.url)"
+          >
+            <img
+              :src="pokemon.image"
+              :alt="pokemon.name"
+              width="50"
+              align="left"
+            />
+            {{ pokemon.name }}
+          </div>
+          <div
+            v-if="list.next"
+            class="pokedex-list-item"
+            @click="fetchList(list.next)"
+            style="justify-content: center"
+          >
+            Next Page
+          </div>
+        </div>
+      </div>
+      <div
+        style="
+          box-shadow: -18px 14px 22px 0px rgba(0, 0, 0, 0.75);
+          padding: 20px;
+        "
+      >
+        <poke-detail
+          v-if="selectedPokemon"
+          :detail="selectedPokemon"
+        ></poke-detail>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import PokeDetail from "./components/PokeDetail.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    PokeDetail,
+  },
+  data() {
+    return {
+      list: [],
+      selectedPokemon: null,
+    };
+  },
+  computed: {
+    listResultsWithImage: function () {
+      return this.list.results.map((item) => {
+        var id = item.url.split("/")[6];
+        item.image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+        return item;
+      });
+    },
+  },
+  mounted() {
+    this.fetchList("https://pokeapi.co/api/v2/pokemon?limit=10");
+  },
+  methods: {
+    selectPokemon: function (url) {
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => (this.selectedPokemon = data));
+    },
+    fetchList: function (url) {
+      fetch(url)
+        .then((response) => response.json())
+        .then((data) => (this.list = data));
+    },
+  },
+};
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+html,
+body {
+  padding-left: 0;
+  margin-left: 0;
+  font-family: sans-serif;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+}
+
+.pokedex-list-item {
+  min-height: 50px;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-transform: capitalize;
+}
+
+.pokedex-list-item:hover {
+  background-color: #ccc;
 }
 </style>

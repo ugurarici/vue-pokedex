@@ -12,20 +12,23 @@
           >
             Previous Page
           </div>
-          <div
-            class="pokedex-list-item"
+
+          <router-link
+            :to="'/detail/' + pokemon.name"
             v-for="pokemon in listResultsWithImage"
             :key="pokemon.name"
-            @click="selectPokemon(pokemon.url)"
+            class="pokedex-list-item"
           >
             <img
               :src="pokemon.image"
               :alt="pokemon.name"
               height="50"
+              width="50"
               align="left"
             />
             {{ pokemon.name }}
-          </div>
+          </router-link>
+
           <div
             v-if="list.next"
             class="pokedex-list-item"
@@ -42,23 +45,17 @@
           padding: 20px;
         "
       >
-        <poke-detail
-          v-if="selectedPokemon"
-          :detail="selectedPokemon"
-        ></poke-detail>
+        <transition name="slide">
+          <router-view></router-view>
+        </transition>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import PokeDetail from "./components/PokeDetail.vue";
-
 export default {
   name: "App",
-  components: {
-    PokeDetail,
-  },
   data() {
     return {
       list: [],
@@ -78,11 +75,6 @@ export default {
     this.fetchList("https://pokeapi.co/api/v2/pokemon?limit=10");
   },
   methods: {
-    selectPokemon: function (url) {
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => (this.selectedPokemon = data));
-    },
     fetchList: function (url) {
       fetch(url)
         .then((response) => response.json())

@@ -21,7 +21,7 @@
             <img
               :src="pokemon.image"
               :alt="pokemon.name"
-              width="50"
+              height="50"
               align="left"
             />
             {{ pokemon.name }}

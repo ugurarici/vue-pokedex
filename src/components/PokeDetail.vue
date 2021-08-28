@@ -3,10 +3,10 @@
     <h2>{{ detail.name }}</h2>
     <div>
       <img :src="detail.sprites.front_default" :alt="detail.name" /><br />
-      <img
+      <!-- <img
         :src="detail.sprites.other.dream_world.front_default"
         :alt="detail.name"
-      />
+      /> -->
     </div>
     <div>
       XP: {{ detail.base_experience }}<br />

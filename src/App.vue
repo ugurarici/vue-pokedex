@@ -3,6 +3,7 @@
     <div class="grid">
       <div>
         <h1>Vue Pokedex</h1>
+        <p>Viewed pokemon count: {{ count }}</p>
         <div v-if="list.results && list.results.length > 0">
           <div
             v-if="list.previous"
@@ -18,6 +19,7 @@
             v-for="pokemon in listResultsWithImage"
             :key="pokemon.name"
             class="pokedex-list-item"
+            :class="{ active: pokemon.name == detail.name }"
           >
             <img
               :src="pokemon.image"
@@ -54,32 +56,19 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from "vuex";
+
 export default {
   name: "App",
-  data() {
-    return {
-      list: [],
-      selectedPokemon: null,
-    };
-  },
   computed: {
-    listResultsWithImage: function () {
-      return this.list.results.map((item) => {
-        var id = item.url.split("/")[6];
-        item.image = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-        return item;
-      });
-    },
+    ...mapState(["count", "list", "detail"]),
+    ...mapGetters(["listResultsWithImage"]),
+  },
+  methods: {
+    ...mapActions(["fetchList"]),
   },
   mounted() {
     this.fetchList("https://pokeapi.co/api/v2/pokemon?limit=10");
-  },
-  methods: {
-    fetchList: function (url) {
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => (this.list = data));
-    },
   },
 };
 </script>
@@ -98,6 +87,8 @@ body {
 }
 
 .pokedex-list-item {
+  color: inherit;
+  text-decoration: none;
   min-height: 50px;
   cursor: pointer;
   display: flex;
@@ -108,5 +99,15 @@ body {
 
 .pokedex-list-item:hover {
   background-color: #ccc;
+}
+
+.active {
+  background-color: white;
+  transform: scale(1);
+  box-shadow: -18px 7px 15px 0px rgba(0, 0, 0, 0.75);
+}
+
+.active:hover {
+  background-color: white;
 }
 </style>

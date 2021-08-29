@@ -1,7 +1,8 @@
 <template>
   <div>
-    <div v-if="detail">
+    <div v-if="detail" :key="detail.name">
       <h2>{{ detail.name }}</h2>
+      <p>Viewed pokemon count: {{ count }}</p>
       <div>
         <img :src="detail.sprites.front_default" :alt="detail.name" /><br />
       </div>
@@ -18,62 +19,31 @@
         </ul>
       </div>
     </div>
-    <div v-else>{{ pokemonName }} <span class="spinner"></span></div>
+    <div v-else>{{ pokemonName }}</div>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from "vuex";
+
 export default {
   name: "PokeDetail",
-  data() {
-    return {
-      detail: null,
-    };
-  },
   computed: {
     pokemonName() {
       return this.$route.params.pokemon;
     },
-  },
-  beforeMount() {
-    this.fetchPokemonDetail();
+    ...mapState(["count", "detail"]),
   },
   methods: {
-    fetchPokemonDetail: function () {
-      fetch(`https://pokeapi.co/api/v2/pokemon/${this.pokemonName}`)
-        .then((response) => response.json())
-        .then((data) => (this.detail = data));
-    },
+    ...mapActions(["fetchPokemonDetail"]),
+  },
+  beforeMount() {
+    this.fetchPokemonDetail(this.pokemonName);
   },
   watch: {
     pokemonName() {
-      this.detail = null;
-      this.fetchPokemonDetail();
+      this.fetchPokemonDetail(this.pokemonName);
     },
   },
 };
 </script>
-
-<style>
-@keyframes spinner {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.spinner:before {
-  content: "";
-  box-sizing: border-box;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin-top: -10px;
-  margin-left: -10px;
-  border-radius: 50%;
-  border: 2px solid #ccc;
-  border-top-color: #000;
-  animation: spinner 0.6s linear infinite;
-}
-</style>

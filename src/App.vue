@@ -15,8 +15,8 @@
           </div>
 
           <router-link
-            :to="'/detail/' + pokemon.name"
             v-for="pokemon in listResultsWithImage"
+            :to="'/detail/' + pokemon.name"
             :key="pokemon.name"
             class="pokedex-list-item"
             :class="{ active: pokemon.name == detail.name }"

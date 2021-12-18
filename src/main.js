@@ -26,7 +26,7 @@ const store = new Vuex.Store({
   state: {
     count: 0,
     list: [],
-    detail: null,
+    detail: { id: 0 },
   },
   mutations: {
     increment(state) {
